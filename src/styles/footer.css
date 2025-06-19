@@ -1,0 +1,28 @@
+.footer {
+    background: #222;
+    color: white;
+    padding: 10px;  /* ✅ Reduce padding */
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: 30px; /* ✅ Set a fixed height */
+    line-height: 30px; /* ✅ Align text within the footer */
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-links a {
+    color: white;
+    margin: 0 8px; /* ✅ Reduce spacing */
+    text-decoration: none;
+    font-size: 12px; /* ✅ Make links slightly smaller */
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}

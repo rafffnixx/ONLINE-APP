@@ -1,0 +1,146 @@
+/* 🎨 Container Styling */
+.orders-container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 📦 Orders Table */
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.orders-table th {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+/* 🛍 Order Images */
+.order-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* 🔘 Action Buttons */
+.view-details-btn {
+    padding: 8px 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.view-details-btn:hover {
+    background: #218838;
+}
+
+.close-details-btn {
+    padding: 8px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-bottom: 10px;
+}
+
+.close-details-btn:hover {
+    background: #c82333;
+}
+
+/* 🛒 Order Details */
+.order-details {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 🏷 Status Label */
+.status {
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.status.pending {
+    background: #ffc107;
+    color: black;
+}
+
+.status.completed {
+    background: #28a745;
+    color: white;
+}
+
+.status.failed {
+    background: #dc3545;
+    color: white;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+    .orders-table th,
+    .orders-table td {
+        padding: 8px;
+    }
+
+    .order-image {
+        width: 45px;
+        height: 45px;
+    }
+}
+.order-details-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.order-details-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close-details-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-details-btn:hover {
+    background: #c82333;
+}

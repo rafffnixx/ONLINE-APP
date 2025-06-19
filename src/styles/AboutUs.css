@@ -1,0 +1,46 @@
+.about-us-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px;
+    text-align: center;
+}
+
+.about-header {
+    background: #218838;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.story-section, .mission-section, .values-section,
+.masai-cables, .quick-links, .products-list, .contact-us {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+a {
+    color: #218838;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.about-footer {
+    margin-top: 40px;
+    padding: 15px;
+    background: #218838;
+    color: white;
+    border-radius: 8px;
+}

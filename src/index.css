@@ -1,13 +1,40 @@
+/* ✅ Keep background stable & fixed */
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+        background-image: url('https://i.postimg.cc/HWwG7HgT/city.avif'); /* ✅ Local Image */
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* ✅ Fix background position */
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif; /* ✅ Modern font */
+    margin: 0;
+    padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ✅ Ensure buttons are responsive */
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff6600; /* ✅ Vibrant button color */
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ff3300;
+}
+
+/* ✅ Main Container for Content Stability */
+.container {
+    background: rgba(255, 255, 255, 0.9); /* ✅ Transparent effect */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    position: relative; /* ✅ Ensures content isn't affected by background */
 }

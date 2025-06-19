@@ -1,0 +1,72 @@
+.admin-dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #f8f9fa;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.08);
+}
+
+.main-content { 
+    flex-grow: 1;
+    margin-left: 240px;  /* ✅ Ensures content isn't hidden behind sidebar */
+}
+
+.admin-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #007bff;
+    color: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-navbar h3 {
+    font-size: 20px;
+}
+
+.dashboard-content {
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.widgets {
+    display: flex;
+    gap: 15px;
+}
+
+.recent-orders {
+    margin-top: 20px;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-summary {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.quick-actions button {
+    margin-top: 15px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.quick-actions button:hover {
+    opacity: 0.8;
+}

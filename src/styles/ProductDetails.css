@@ -1,0 +1,21 @@
+.product-details {
+    text-align: center;
+    padding: 20px;
+}
+
+.product-details img {
+    max-width: 200px;
+    border-radius: 10px;
+}
+.back-button {
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.back-button:hover {
+    color: #0056b3;
+}

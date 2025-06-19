@@ -1,0 +1,98 @@
+.profile-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 18px;
+    color: #555;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+ul li {
+    background: #f8f9fa;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 6px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 600px) {
+    .profile-container {
+        max-width: 90%;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 16px;
+    }
+}.orders-container {
+    display: flex;
+    flex-direction: column; /* ✅ Stack rows downward */
+    gap: 10px;
+}
+
+.order-horizontal {
+    display: flex;
+    justify-content: space-between; /* ✅ Space out details */
+    align-items: center;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-horizontal span {
+    font-size: 16px;
+    color: #333;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* ✅ Color-coded statuses */
+.status.pending {
+    background: #ffc107;
+    color: #fff;
+}
+
+.status.completed {
+    background: #28a745;
+    color: #fff;
+}
+
+.status.cancelled {
+    background: #dc3545;
+    color: #fff;
+}

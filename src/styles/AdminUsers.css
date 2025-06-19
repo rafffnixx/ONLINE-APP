@@ -1,0 +1,59 @@
+.admin-users-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-users-table th, .admin-users-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.select-role {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.edit-btn {
+    background-color: blue;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+}
+
+.edit-btn:hover {
+    background-color: darkblue;
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+
+.empty-users {
+    color: gray;
+    font-style: italic;
+}
