@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 
 const Checkout = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -16,13 +16,11 @@ const Checkout = () => {
             }
 
             try {
-                const response = await axios.get("http://localhost:5000/api/cart/list", {
+                const response = await api.get("/api/cart/list", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
                 console.log("🔍 Received Cart Data:", response.data);
-
-                // Ensure response.data is always treated as an array
                 setCartItems(Array.isArray(response.data) ? response.data : []);
             } catch (err) {
                 console.error("❌ Error fetching cart:", err);

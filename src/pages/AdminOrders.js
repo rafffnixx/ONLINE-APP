@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "../styles/AdminOrders.css"; 
+import api from "../api/axiosInstance";
+import "../styles/AdminOrders.css";
 
 const AdminOrders = () => {
     const [users, setUsers] = useState([]);
@@ -9,18 +9,17 @@ const AdminOrders = () => {
     const [viewingStatus, setViewingStatus] = useState(null);
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("❌ Admin login required!");
-                return;
-            }
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("❌ Admin login required!");
+            return;
+        }
 
+        const fetchUsers = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/orders/admin/grouped", {
+                const response = await api.get("/api/orders/admin/grouped", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
                 setUsers(response.data);
             } catch (error) {
                 console.error("❌ Error fetching users:", error);
@@ -28,13 +27,10 @@ const AdminOrders = () => {
         };
 
         const fetchOrderStats = async () => {
-            const token = localStorage.getItem("token");
-
             try {
-                const response = await axios.get("http://localhost:5000/api/orders/admin/stats", {
+                const response = await api.get("/api/orders/admin/stats", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
                 setOrderStats(response.data);
             } catch (error) {
                 console.error("❌ Error fetching order stats:", error);
@@ -53,7 +49,6 @@ const AdminOrders = () => {
         }
 
         setViewingStatus(status);
-
         const token = localStorage.getItem("token");
         if (!token) {
             alert("❌ Admin login required!");
@@ -61,10 +56,9 @@ const AdminOrders = () => {
         }
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/orders/admin/status/${status}`, {
+            const response = await api.get(`/api/orders/admin/status/${status}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             setUserOrders(response.data);
         } catch (error) {
             console.error("❌ Error fetching orders by status:", error);
@@ -73,7 +67,6 @@ const AdminOrders = () => {
 
     const fetchUserOrders = async (userId) => {
         setViewingStatus(null);
-
         const token = localStorage.getItem("token");
         if (!token) {
             alert("❌ Admin login required!");
@@ -81,12 +74,10 @@ const AdminOrders = () => {
         }
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/orders/admin/orders/${userId}`, {
+            const response = await api.get(`/api/orders/admin/orders/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             setUserOrders(response.data);
-            console.log("✅ Orders fetched:", response.data);
         } catch (error) {
             console.error("❌ Error fetching user orders:", error);
             alert("❌ Failed to load user orders.");
@@ -101,13 +92,12 @@ const AdminOrders = () => {
         }
 
         try {
-            await axios.put(`http://localhost:5000/api/orders/admin/update/${orderId}`, 
+            await api.put(`/api/orders/admin/update/${orderId}`,
                 { status: newStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
             alert("✅ Order status updated!");
-            fetchOrdersByStatus(viewingStatus); // ✅ Refresh orders after updating status
+            fetchOrdersByStatus(viewingStatus);
         } catch (error) {
             console.error("❌ Error updating order status:", error);
             alert("❌ Failed to update order status.");

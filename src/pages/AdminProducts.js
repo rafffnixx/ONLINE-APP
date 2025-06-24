@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import "../styles/AdminProducts.css"; 
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [editingProduct, setEditingProduct] = useState(null);
     const [updatedData, setUpdatedData] = useState({});
-    const token = localStorage.getItem("token"); // ✅ Fetch stored token
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         fetchProducts();
@@ -14,7 +14,7 @@ const AdminProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/api/products/list", {
+            const response = await api.get("/api/products/list", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProducts(response.data);
@@ -31,10 +31,10 @@ const AdminProducts = () => {
     const handleDelete = async (productId) => {
         if (window.confirm("❌ Are you sure you want to delete this product?")) {
             try {
-                await axios.delete(`http://localhost:5000/api/admin/products/delete/${productId}`, {
+                await api.delete(`/api/admin/products/delete/${productId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                fetchProducts(); // ✅ Refresh product list after delete
+                fetchProducts();
                 alert("✅ Product deleted successfully!");
             } catch (error) {
                 console.error("❌ Error deleting product:", error);
@@ -54,11 +54,11 @@ const AdminProducts = () => {
         event.preventDefault();
         try {
             console.log("Updating Product ID:", editingProduct.id);
-            await axios.put(`http://localhost:5000/api/admin/products/update/${editingProduct.id}`, updatedData, {
+            await api.put(`/api/admin/products/update/${editingProduct.id}`, updatedData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setEditingProduct(null);
-            fetchProducts(); // ✅ Refresh product list after update
+            fetchProducts();
             alert("✅ Product updated successfully!");
         } catch (error) {
             console.error("❌ Error updating product:", error);

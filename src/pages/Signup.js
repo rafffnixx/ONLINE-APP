@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import "../styles/signup.css";  // ✅ Import modern styles
+import "../styles/signup.css";
 
 const Signup = () => {
     const [user, setUser] = useState({ name: "", email: "", password: "" });
@@ -14,9 +14,9 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:5000/api/auth/signup", user);
+            await api.post("/api/auth/signup", user);
             alert("✅ Signup successful! You can now log in.");
-            navigate("/login");  // ✅ Redirect to login after signup
+            navigate("/login");
         } catch (error) {
             alert("❌ Error signing up.");
         }
@@ -28,14 +28,38 @@ const Signup = () => {
 
             <form onSubmit={handleSubmit} className="auth-form">
                 <h2>🔐 Create Your Account</h2>
-                
-                <input type="text" name="name" placeholder="Full Name" value={user.name} onChange={handleChange} required />
-                <input type="email" name="email" placeholder="Email Address" value={user.email} onChange={handleChange} required />
-                <input type="password" name="password" placeholder="Password" value={user.password} onChange={handleChange} required />
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    value={user.name}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={user.email}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={user.password}
+                    onChange={handleChange}
+                    required
+                />
 
                 <button type="submit" className="auth-btn">Sign Up</button>
 
-                <p className="auth-links">Already have an account? <a onClick={() => navigate("/login")}>Log in</a></p>
+                <p className="auth-links">
+                    Already have an account?{" "}
+                <button type="button" onClick={() => navigate("/login")} className="link-button">Log in</button>
+                </p>
             </form>
         </div>
     );

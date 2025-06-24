@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import "../styles/Orders.css";
 
 const Orders = () => {
@@ -14,7 +14,7 @@ const Orders = () => {
             }
 
             try {
-                const response = await axios.get("http://localhost:5000/api/orders/history", {
+                const response = await api.get("/api/orders/history", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -35,11 +35,11 @@ const Orders = () => {
         }
 
         try {
-            await axios.delete(`http://localhost:5000/api/orders/delete/${id}`, {
+            await api.delete(`/api/orders/delete/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setRecords(records.filter(record => record.id !== id));
+            setRecords(prev => prev.filter(record => record.id !== id));
             alert("✅ Deleted successfully!");
         } catch (error) {
             console.error("❌ Error deleting record:", error);
@@ -77,7 +77,11 @@ const Orders = () => {
                                     </td>
                                     <td>{record.product_name}</td>
                                     <td>
-                                        <img src={record.image_url || "https://via.placeholder.com/90"} alt={record.product_name} className="order-image" />
+                                        <img
+                                            src={record.image_url || "https://via.placeholder.com/90"}
+                                            alt={record.product_name}
+                                            className="order-image"
+                                        />
                                     </td>
                                     <td>{record.quantity}</td>
                                     <td>${record.total_price}</td>

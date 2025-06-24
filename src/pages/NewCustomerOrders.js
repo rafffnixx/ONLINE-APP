@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
-import "../styles/NewCustomerOrders.css"; 
-
-const API_BASE_URL = "http://localhost:5000/api/customer-orders";
+import "../styles/NewCustomerOrders.css";
 
 const NewCustomerOrders = () => {
     const [orders, setOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [error, setError] = useState(null);
-    const [activeOrderId, setActiveOrderId] = useState(null);  
+    const [activeOrderId, setActiveOrderId] = useState(null);
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -28,12 +26,12 @@ const NewCustomerOrders = () => {
                     return;
                 }
 
-                const response = await axios.get(`${API_BASE_URL}/customer/${decodedToken.id}`, {
+                const response = await api.get(`/api/customer-orders/customer/${decodedToken.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
                 const formattedOrders = await Promise.all(response.data.map(async (order) => {
-                    const orderItemsRes = await axios.get(`${API_BASE_URL}/${order.id}`, {
+                    const orderItemsRes = await api.get(`/api/customer-orders/${order.id}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
@@ -45,7 +43,7 @@ const NewCustomerOrders = () => {
                         orderLabel: `Order#${order.id}`,
                         itemCount: totalQuantity,
                         totalPrice: Number(order.total_price) || 0,
-                        items: items,  
+                        items: items,
                     };
                 }));
 
@@ -61,7 +59,7 @@ const NewCustomerOrders = () => {
     }, []);
 
     const handleViewOrder = async (orderId) => {
-        if (!orderId || isNaN(Number(orderId))) {  
+        if (!orderId || isNaN(Number(orderId))) {
             console.error("❌ Invalid order ID:", orderId);
             setError("❌ Unable to fetch order details.");
             return;
@@ -70,7 +68,7 @@ const NewCustomerOrders = () => {
         if (activeOrderId === orderId) {
             setSelectedOrder(null);
             setActiveOrderId(null);
-            return;  
+            return;
         }
 
         const token = localStorage.getItem("token");
@@ -80,7 +78,7 @@ const NewCustomerOrders = () => {
         }
 
         try {
-            const response = await axios.get(`${API_BASE_URL}/${orderId}`, {
+            const response = await api.get(`/api/customer-orders/${orderId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -89,7 +87,7 @@ const NewCustomerOrders = () => {
                 items: response.data.items || [],
             });
 
-            setActiveOrderId(orderId);  
+            setActiveOrderId(orderId);
 
         } catch (err) {
             console.error("❌ Error fetching order details:", err);
@@ -99,7 +97,7 @@ const NewCustomerOrders = () => {
 
     const handleCloseOrder = () => {
         setSelectedOrder(null);
-        setActiveOrderId(null);  
+        setActiveOrderId(null);
     };
 
     return (
@@ -125,7 +123,7 @@ const NewCustomerOrders = () => {
                             <tr key={order.id}>
                                 <td>{order.orderLabel}</td>
                                 <td>
-                                    <img src={order.img_url || "https://i.postimg.cc/Z5fLwvD7/order-now-icon-ecommerce-shop-now-call-action-788415-6210-removebg-preview.png"} className="order-image" />
+                                    <img src={order.img_url || "https://i.postimg.cc/Z5fLwvD7/order-now-icon-ecommerce-shop-now-call-action-788415-6210-removebg-preview.png"} className="order-image" alt="order" />
                                 </td>
                                 <td>{order.itemCount}</td>
                                 <td>${order.totalPrice.toFixed(2)}</td>
@@ -144,8 +142,8 @@ const NewCustomerOrders = () => {
             )}
 
             {selectedOrder && (
-                <div className="order-details-overlay">  
-                    <div className="order-details-modal">  
+                <div className="order-details-overlay">
+                    <div className="order-details-modal">
                         <h3>🛒 Order Details for {selectedOrder.orderLabel}</h3>
                         <button className="close-details-btn" onClick={handleCloseOrder}>❌ Close</button>
                         <table className="order-items-table">
@@ -161,11 +159,11 @@ const NewCustomerOrders = () => {
                             </thead>
                             <tbody>
                                 {selectedOrder.items.map((item, index) => (
-                                    <tr key={`${item.product_id}-${index}`}>  
+                                    <tr key={`${item.product_id}-${index}`}>
                                         <td>{item.product_id}</td>
                                         <td>{item.product_name}</td>
                                         <td>
-                                            <img src={item.img_url || "https://via.placeholder.com/90"} className="order-image" />
+                                            <img src={item.img_url || "https://via.placeholder.com/90"} className="order-image" alt="product" />
                                         </td>
                                         <td>{item.quantity}</td>
                                         <td>${Number(item.price_per_unit || 0).toFixed(2)}</td>

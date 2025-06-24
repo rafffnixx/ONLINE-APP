@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import "../styles/AdminDashboard.css";  
 import Sidebar from "../components/Sidebar";  
 import Widget from "../components/Widget";  
-
-const API_BASE_URL = "http://localhost:5000/api";
 
 const AdminDashboard = () => {
     const [metrics, setMetrics] = useState({});
@@ -18,7 +16,7 @@ const AdminDashboard = () => {
 
             try {
                 console.log("🔍 Fetching admin dashboard data...");
-                const response = await axios.get(`${API_BASE_URL}/admin/overview`, {
+                const response = await api.get("/api/admin/overview", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -48,18 +46,20 @@ const AdminDashboard = () => {
     const handleEdit = async (orderId, currentStatus) => {
         const newStatus = prompt(`Update status for Order #${orderId} (Current: ${currentStatus}):`);
         if (newStatus && newStatus !== currentStatus) {
-            await axios.put(`${API_BASE_URL}/admin/update-order`, { orderId, status: newStatus }, {
+            await api.put("/api/admin/update-order", { orderId, status: newStatus }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             });
 
-            setRecentOrders(prevOrders => prevOrders.map(order => 
-                order.order_id === orderId ? { ...order, status: newStatus } : order
-            ));
+            setRecentOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order.order_id === orderId ? { ...order, status: newStatus } : order
+                )
+            );
         }
     };
 
-    const filteredOrders = filteredStatus 
-        ? recentOrders.filter(order => order.status.toLowerCase() === filteredStatus) 
+    const filteredOrders = filteredStatus
+        ? recentOrders.filter(order => order.status.toLowerCase() === filteredStatus)
         : recentOrders;
 
     return (
@@ -71,9 +71,9 @@ const AdminDashboard = () => {
                 <div className="widgets">
                     {Object.entries(metrics).map(([key, value]) => (
                         <div key={key} className="widget-container">
-                            <Widget 
-                                title={key.replace(/_/g, " ")} 
-                                value={value.toString()} 
+                            <Widget
+                                title={key.replace(/_/g, " ")}
+                                value={value.toString()}
                             />
                             <button className="view-button" onClick={() => handleStatusClick(key)}>🔍 View</button>
                         </div>
@@ -100,4 +100,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
- 

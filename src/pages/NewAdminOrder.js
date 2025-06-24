@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import "../styles/NewAdminOrders.css"; // ✅ Import the admin orders styles
+import api from "../api/axiosInstance";
+import "../styles/NewAdminOrders.css";
 
-const API_BASE_URL = "http://localhost:5000/api";
 const statusOptions = ["pending", "to be shipped", "shipped", "delivered", "canceled"];
 
 const NewAdminOrders = () => {
@@ -20,7 +19,7 @@ const NewAdminOrders = () => {
 
             try {
                 console.log("🔍 Fetching all orders...");
-                const response = await axios.get(`${API_BASE_URL}/new-orders/admin/all`, {  // ✅ Updated API route
+                const response = await api.get("/api/new-orders/admin/all", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -55,21 +54,21 @@ const NewAdminOrders = () => {
         }
 
         try {
-            console.log(`🚀 Updating Order #${orderId} to "${newStatus}"...`, { orderId, newStatus });
+            console.log(`🚀 Updating Order #${orderId} to "${newStatus}"...`);
 
-            const response = await axios.patch(`${API_BASE_URL}/new-orders/admin/update/${orderId}`, { status: newStatus }, {  // ✅ Updated API route
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.patch(`/api/new-orders/admin/update/${orderId}`,
+                { status: newStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-            if (response.data && response.data.order) {
-                console.log(`✅ Order #${orderId} updated to "${newStatus}" in the database`);
+            if (response.data?.order) {
+                console.log(`✅ Order #${orderId} updated to "${newStatus}"`);
 
-                // ✅ Fetch latest orders directly from backend after update
-                const updatedOrderResponse = await axios.get(`${API_BASE_URL}/new-orders/admin/all`, {  // ✅ Updated API route
+                const updated = await api.get("/api/new-orders/admin/all", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                setOrders(updatedOrderResponse.data);
+                setOrders(updated.data);
                 alert(`✅ Order #${orderId} updated to "${newStatus}"`);
             } else {
                 throw new Error("Unexpected backend response.");
@@ -90,11 +89,11 @@ const NewAdminOrders = () => {
             {orders.map(order => (
                 <div key={order.id} className={`order-item ${order.updated ? "updated" : ""}`}>
                     <p onClick={() => toggleOrderView(order.id)} className="clickable-order">
-                        🆔 **Order #{order.id}** | 👤 User ID: {order.user_id} | 💰 **Total: ${order.total_price}** | ⏳ Status: {order.status}  
-                        <span>{expandedOrders[order.id] ? "🔽 Hide Details" : "▶ View Details"}</span>
+                        🆔 <strong>Order #{order.id}</strong> | 👤 User ID: {order.user_id} | 💰 <strong>Total: ${order.total_price}</strong> | ⏳ Status: {order.status}  
+                        <span>{expandedOrders[order.id] ? " 🔽 Hide Details" : " ▶ View Details"}</span>
                     </p>
-                    
-                    <select 
+
+                    <select
                         className="status-dropdown"
                         value={order.status}
                         onChange={(e) => handleStatusUpdate(order.id, e.target.value)}

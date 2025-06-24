@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { FaBars, FaTimes } from "react-icons/fa";
 import "../styles/ProductList.css";
 
@@ -17,15 +17,11 @@ const ProductList = () => {
             try {
                 setIsLoading(true);
                 setError(null);
-                const response = await axios.get("http://localhost:5000/api/products/list");
+                const response = await api.get("/api/products/list");
 
                 const categorizedProducts = {};
                 response.data.forEach(product => {
-                    if (!product.category || !product.price_per_unit) {
-                        console.warn("Invalid product data:", product);
-                        return;
-                    }
-                    
+                    if (!product.category || !product.price_per_unit) return;
                     if (!categorizedProducts[product.category]) {
                         categorizedProducts[product.category] = [];
                     }
@@ -49,15 +45,12 @@ const ProductList = () => {
 
     const handlePlaceOrder = async (product, quantity) => {
         const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must log in first!");
-            return;
-        }
+        if (!token) return alert("You must log in first!");
 
         try {
             const qty = parseFloat(quantity) || 1;
             const price = Number(product.price_per_unit) || 0;
-            
+
             const orderData = {
                 user_id: 2,
                 items: [
@@ -69,7 +62,7 @@ const ProductList = () => {
                 ]
             };
 
-            await axios.post("http://localhost:5000/api/orders/place", orderData, {
+            await api.post("/api/orders/place", orderData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -82,23 +75,15 @@ const ProductList = () => {
 
     const handleAddToCart = async (product, quantity) => {
         const token = localStorage.getItem("token");
-        if (!token) {
-            alert("❌ You must log in first!");
-            return;
-        }
+        if (!token) return alert("❌ You must log in first!");
 
         try {
             const qty = parseFloat(quantity) || 1;
 
-            const response = await axios.post(
-                "http://localhost:5000/api/cart/add",
-                {
-                    product_id: product.id,
-                    quantity: qty
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+            await api.post(
+                "/api/cart/add",
+                { product_id: product.id, quantity: qty },
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             alert(`${product.name} added to cart!`);
@@ -114,17 +99,12 @@ const ProductList = () => {
             window.scrollTo({ top: 0, behavior: "smooth" });
             return;
         }
-        
         const categoryElement = document.getElementById(`category-${category}`);
         if (categoryElement) {
             const offset = 100;
             const elementPosition = categoryElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
-            });
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
     };
 
@@ -132,22 +112,19 @@ const ProductList = () => {
         const num = Number(price);
         return isNaN(num) ? "0.00" : num.toFixed(2);
     };
-    
+
     return (
         <div className="product-page-container">
-            <button 
-                className="sidebar-toggle"
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            >
+            <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
                 {isSidebarCollapsed ? <FaBars /> : <FaTimes />}
             </button>
 
-            <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+            <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
                 <h3>Categories</h3>
                 <ul>
                     <li>
-                        <button 
-                            className={`category-btn ${!selectedCategory ? "active" : ""}`} 
+                        <button
+                            className={`category-btn ${!selectedCategory ? "active" : ""}`}
                             onClick={() => {
                                 scrollToCategory("");
                                 setIsSidebarCollapsed(true);
@@ -158,8 +135,8 @@ const ProductList = () => {
                     </li>
                     {Object.keys(productsByCategory).map(category => (
                         <li key={category}>
-                            <button 
-                                className={`category-btn ${selectedCategory === category ? "active" : ""}`} 
+                            <button
+                                className={`category-btn ${selectedCategory === category ? "active" : ""}`}
                                 onClick={() => {
                                     scrollToCategory(category);
                                     setIsSidebarCollapsed(true);
@@ -194,10 +171,10 @@ const ProductList = () => {
                                 {productsByCategory[category].map(product => (
                                     <div key={product.id} className="product-card">
                                         <Link to={`/product/${product.id}`} className="product-link">
-                                            <img 
-                                                src={product.image_url || "https://via.placeholder.com/150"} 
-                                                alt={product.name} 
-                                                className="product-image" 
+                                            <img
+                                                src={product.image_url || "https://via.placeholder.com/150"}
+                                                alt={product.name}
+                                                className="product-image"
                                             />
                                             <h3>{product.name}</h3>
                                             <p>
@@ -208,29 +185,29 @@ const ProductList = () => {
                                         <div className="order-section">
                                             <label>
                                                 Quantity ({product.unit}):
-                                                <input 
-                                                    type="number" 
-                                                    min="0.1" 
-                                                    step="0.1" 
-                                                    defaultValue="1" 
+                                                <input
+                                                    type="number"
+                                                    min="0.1"
+                                                    step="0.1"
+                                                    defaultValue="1"
                                                     id={`qty-${product.id}`}
                                                 />
                                             </label>
                                             <div className="button-group">
-                                                <button 
+                                                <button
                                                     onClick={() => handleAddToCart(
-                                                        product, 
+                                                        product,
                                                         document.getElementById(`qty-${product.id}`)?.value || "1"
-                                                    )} 
+                                                    )}
                                                     className="add-to-cart-btn"
                                                 >
                                                     Add to Cart
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handlePlaceOrder(
-                                                        product, 
+                                                        product,
                                                         document.getElementById(`qty-${product.id}`)?.value || "1"
-                                                    )} 
+                                                    )}
                                                     className="order-btn"
                                                 >
                                                     Place Order

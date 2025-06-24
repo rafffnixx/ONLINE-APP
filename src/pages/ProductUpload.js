@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import "../styles/ProductUpload.css"; 
+import "../styles/ProductUpload.css";
 
 const ProductUpload = () => {
     const [productData, setProductData] = useState({
@@ -11,7 +11,7 @@ const ProductUpload = () => {
         unit: "meters",
         stock: "10",
         image_url: "",
-        category_name: ""  // ✅ New field for category selection
+        category_name: ""
     });
 
     const [categories, setCategories] = useState([]);
@@ -23,15 +23,15 @@ const ProductUpload = () => {
         const token = localStorage.getItem("token");
         setIsLoggedIn(!!token);
 
-        // ✅ Fetch categories from backend
         const fetchCategories = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/categories");
+                const response = await api.get("/api/categories");
                 setCategories(response.data);
             } catch (error) {
                 console.error("❌ Error fetching categories:", error);
             }
         };
+
         fetchCategories();
     }, []);
 
@@ -43,9 +43,9 @@ const ProductUpload = () => {
         if (!newCategory.trim()) return alert("❌ Enter a valid category name!");
 
         try {
-            const response = await axios.post("http://localhost:5000/api/categories", { name: newCategory });
-            setCategories([...categories, response.data]); // ✅ Add to dropdown
-            setProductData({ ...productData, category_name: newCategory }); // ✅ Assign new category
+            const response = await api.post("/api/categories", { name: newCategory });
+            setCategories([...categories, response.data]);
+            setProductData({ ...productData, category_name: newCategory });
             setNewCategory("");
         } catch (error) {
             console.error("❌ Error adding category:", error);
@@ -69,13 +69,19 @@ const ProductUpload = () => {
         }
 
         try {
-            await axios.post("http://localhost:5000/api/products/add", productData, {
+            await api.post("/api/products/add", productData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
             alert("✅ Product added successfully!");
             setProductData({
-                name: "", description: "", price_per_unit: "", unit: "meters", stock: "10", image_url: "", category_name: ""
+                name: "",
+                description: "",
+                price_per_unit: "",
+                unit: "meters",
+                stock: "10",
+                image_url: "",
+                category_name: ""
             });
         } catch (error) {
             console.error("❌ Error posting product:", error);
@@ -111,7 +117,6 @@ const ProductUpload = () => {
                     <label>Image URL:</label>
                     <input type="text" name="image_url" value={productData.image_url} onChange={handleChange} />
 
-                    {/* ✅ Category Selection */}
                     <label>Category:</label>
                     <select name="category_name" value={productData.category_name} onChange={handleChange} required>
                         <option value="">Select a category</option>
@@ -124,7 +129,12 @@ const ProductUpload = () => {
                     {productData.category_name === "new" && (
                         <div className="new-category-section">
                             <label>Enter New Category Name:</label>
-                            <input type="text" name="new_category_name" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} required />
+                            <input
+                                type="text"
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                                required
+                            />
                             <button type="button" onClick={addCategory}>✅ Add Category</button>
                         </div>
                     )}

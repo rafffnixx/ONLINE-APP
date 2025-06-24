@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import Modal from "react-modal";
 
-Modal.setAppElement("#root"); // ✅ Accessibility compliance
+Modal.setAppElement("#root");
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -11,7 +11,7 @@ const AdminUsers = () => {
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
-        refreshUserList(); // ✅ Load users on page load
+        refreshUserList();
     }, []);
 
     const refreshUserList = async () => {
@@ -22,10 +22,9 @@ const AdminUsers = () => {
         }
 
         try {
-            const response = await axios.get("http://localhost:5000/api/users/all", {
+            const response = await api.get("/api/users/all", {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             setUsers(response.data);
             setErrorMessage(null);
         } catch (error) {
@@ -54,9 +53,15 @@ const AdminUsers = () => {
         }
 
         try {
-            await axios.put(`http://localhost:5000/api/users/update/${selectedUser.id}`, 
-                { name: selectedUser.name, email: selectedUser.email, role: selectedUser.role },
-                { headers: { Authorization: `Bearer ${token}` } }
+            await api.put(`/api/users/update/${selectedUser.id}`,
+                {
+                    name: selectedUser.name,
+                    email: selectedUser.email,
+                    role: selectedUser.role,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
             );
 
             alert("✅ User details updated successfully!");
@@ -76,41 +81,32 @@ const AdminUsers = () => {
                 <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
                     <thead>
                         <tr>
-                            <th style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>User ID</th>
-                            <th style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>Name</th>
-                            <th style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>Email</th>
-                            <th style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>Role</th>
-                            <th style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>Action</th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map(user => (
-                            <tr key={user.id} style={{ textAlign: "center" }}>
+                            <tr key={user.id}>
                                 <td>{user.id}</td>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>
-                                    <select 
-                                        value={user.role} 
-                                        onChange={(e) => setSelectedUser({ ...user, role: e.target.value })} 
-                                        style={{ padding: "5px", borderRadius: "5px" }}
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) =>
+                                            setSelectedUser({ ...user, role: e.target.value })
+                                        }
                                     >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <button 
-                                        onClick={() => openEditModal(user)} 
-                                        style={{ backgroundColor: "blue", color: "white", padding: "6px 12px", border: "none", cursor: "pointer", borderRadius: "5px", marginRight: "5px" }}
-                                    >
-                                        ✏️ Edit
-                                    </button>
-                                    <button 
-                                        style={{ backgroundColor: "red", color: "white", padding: "6px 12px", border: "none", cursor: "pointer", borderRadius: "5px" }}
-                                    >
-                                        ❌ Delete
-                                    </button>
+                                    <button onClick={() => openEditModal(user)}>✏️ Edit</button>
                                 </td>
                             </tr>
                         ))}
@@ -119,43 +115,36 @@ const AdminUsers = () => {
             )}
 
             {modalOpen && selectedUser && (
-                <Modal isOpen={modalOpen} onRequestClose={closeEditModal} style={{ content: { maxWidth: "400px", margin: "auto", padding: "20px", borderRadius: "8px" } }}>
+                <Modal isOpen={modalOpen} onRequestClose={closeEditModal}>
                     <h2>Edit User</h2>
                     <label>Name:</label>
-                    <input 
-                        type="text" 
-                        value={selectedUser.name} 
-                        onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} 
-                        style={{ width: "100%", padding: "8px", margin: "5px 0" }}
+                    <input
+                        type="text"
+                        value={selectedUser.name}
+                        onChange={(e) =>
+                            setSelectedUser({ ...selectedUser, name: e.target.value })
+                        }
                     />
                     <label>Email:</label>
-                    <input 
-                        type="email" 
-                        value={selectedUser.email} 
-                        onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} 
-                        style={{ width: "100%", padding: "8px", margin: "5px 0" }}
+                    <input
+                        type="email"
+                        value={selectedUser.email}
+                        onChange={(e) =>
+                            setSelectedUser({ ...selectedUser, email: e.target.value })
+                        }
                     />
                     <label>Role:</label>
-                    <select 
-                        value={selectedUser.role} 
-                        onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}
-                        style={{ width: "100%", padding: "8px", margin: "5px 0" }}
+                    <select
+                        value={selectedUser.role}
+                        onChange={(e) =>
+                            setSelectedUser({ ...selectedUser, role: e.target.value })
+                        }
                     >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button 
-                        onClick={saveUserDetails} 
-                        style={{ backgroundColor: "green", color: "white", padding: "8px", marginTop: "10px", borderRadius: "5px", cursor: "pointer" }}
-                    >
-                        ✅ Save
-                    </button>
-                    <button 
-                        onClick={closeEditModal} 
-                        style={{ backgroundColor: "gray", color: "white", padding: "8px", marginTop: "10px", marginLeft: "5px", borderRadius: "5px", cursor: "pointer" }}
-                    >
-                        ❌ Cancel
-                    </button>
+                    <button onClick={saveUserDetails}>✅ Save</button>
+                    <button onClick={closeEditModal}>❌ Cancel</button>
                 </Modal>
             )}
         </div>

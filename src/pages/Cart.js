@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import "../styles/Cart.css";
-
-const API_BASE_URL = "http://localhost:5000/api";
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -12,7 +10,6 @@ const Cart = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // Fetch cart items from backend
     const fetchCart = useCallback(async () => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -21,14 +18,13 @@ const Cart = () => {
         }
 
         try {
-            const response = await axios.get(`${API_BASE_URL}/cart/list`, {
+            const response = await api.get("/api/cart/list", {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
             const data = Array.isArray(response?.data) ? response.data : [];
             setCartItems(data);
             calculateTotalPrice(data);
-
         } catch (error) {
             console.error("Error fetching cart:", error);
             setError(error.response?.data?.message || "Failed to load cart items");
@@ -39,23 +35,22 @@ const Cart = () => {
         fetchCart();
     }, [fetchCart]);
 
-   const calculateTotalPrice = (items = []) => {
-    if (!Array.isArray(items)) {
-        console.error("❌ Expected an array, but got:", items);
-        setTotalPrice(0);
-        return;
-    }
+    const calculateTotalPrice = (items = []) => {
+        if (!Array.isArray(items)) {
+            console.error("❌ Expected an array, but got:", items);
+            setTotalPrice(0);
+            return;
+        }
 
-    const total = items.reduce((sum, item) => {
-        const price = Number(item.price_per_unit) || 0;
-        const quantity = Number(item.quantity) || 0;
-        return sum + (Number(item.total_price) || (price * quantity));
-    }, 0);
+        const total = items.reduce((sum, item) => {
+            const price = Number(item.price_per_unit) || 0;
+            const quantity = Number(item.quantity) || 0;
+            return sum + (Number(item.total_price) || (price * quantity));
+        }, 0);
 
-    setTotalPrice(total);
-};
+        setTotalPrice(total);
+    };
 
-    // Remove item from cart
     const handleRemove = async (product_id) => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -64,7 +59,7 @@ const Cart = () => {
         }
 
         try {
-            await axios.delete(`${API_BASE_URL}/cart/remove/${product_id}`, {
+            await api.delete(`/api/cart/remove/${product_id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchCart();
@@ -74,7 +69,6 @@ const Cart = () => {
         }
     };
 
-    // Place order
     const handlePlaceOrder = async () => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -102,15 +96,14 @@ const Cart = () => {
                 uniqueKey: `${item.product_id}-${index}`
             }));
 
-            const response = await axios.post(
-                `${API_BASE_URL}/customer-orders/orderBananaSplit`, 
+            const response = await api.post("/api/customer-orders/orderBananaSplit", 
                 { items: orderItems },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.data?.order_id) {
-                await axios.delete(`${API_BASE_URL}/cart/clear`, { 
-                    headers: { Authorization: `Bearer ${token}` } 
+                await api.delete("/api/cart/clear", {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchCart();
                 navigate(`/orders/${response.data.order_id}`);
@@ -147,8 +140,8 @@ const Cart = () => {
                                     <p>Quantity: {item.quantity}</p>
                                     <p>${(Number(item.total_price) || (Number(item.price_per_unit) * item.quantity)).toFixed(2)}</p>
                                 </div>
-                                <button 
-                                    onClick={() => handleRemove(item.product_id)} 
+                                <button
+                                    onClick={() => handleRemove(item.product_id)}
                                     className="remove-item-btn"
                                 >
                                     ❌ Remove
@@ -160,16 +153,16 @@ const Cart = () => {
                         <h3>Total: <span className="total-price">${totalPrice.toFixed(2)}</span></h3>
                     </div>
                     <div className="cart-actions">
-                        <button 
-                            onClick={() => navigate("/checkout")} 
+                        <button
+                            onClick={() => navigate("/checkout")}
                             className="checkout-btn"
                         >
                             🚀 Proceed to Checkout
                         </button>
-                        <button 
-                            onClick={handlePlaceOrder} 
-                            disabled={isPlacingOrder} 
-                            className={`place-order-btn ${isPlacingOrder ? 'processing' : ''}`}
+                        <button
+                            onClick={handlePlaceOrder}
+                            disabled={isPlacingOrder}
+                            className={`place-order-btn ${isPlacingOrder ? "processing" : ""}`}
                         >
                             {isPlacingOrder ? "⏳ Processing..." : "📦 Place Order Now"}
                         </button>

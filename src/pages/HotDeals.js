@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
-import "../styles/hotdeal.css";  // ✅ Import the external CSS file
+import api from "../api/axiosInstance";
+import "../styles/hotdeal.css";
 
 const HotDeals = () => {
     const [hotProducts, setHotProducts] = useState([]);
@@ -9,7 +9,7 @@ const HotDeals = () => {
     useEffect(() => {
         const fetchHotProducts = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/hot-deals");
+                const response = await api.get("/api/hot-deals");
                 setHotProducts(response.data);
             } catch (error) {
                 console.error("❌ Error fetching hot deals:", error);
@@ -19,7 +19,6 @@ const HotDeals = () => {
         fetchHotProducts();
     }, []);
 
-    // 🔄 Scroll Functions
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -35,11 +34,8 @@ const HotDeals = () => {
     return (
         <div className="hot-deals-section">
             <h2>🔥 Hot Deals</h2>
-
-            {/* ✅ Left Scroll Button */}
             <button onClick={scrollLeft} className="hot-deals-scroll-btn left-btn">◀</button>
 
-            {/* ✅ Scrolling Container */}
             <div ref={scrollContainerRef} className="hot-deals-container">
                 {hotProducts.map(product => (
                     <div key={product.id} className="hot-deals-item">
@@ -51,7 +47,6 @@ const HotDeals = () => {
                 ))}
             </div>
 
-            {/* ✅ Right Scroll Button */}
             <button onClick={scrollRight} className="hot-deals-scroll-btn right-btn">▶</button>
         </div>
     );

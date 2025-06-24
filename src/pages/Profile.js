@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
-import "../styles/Profile.css";  
-
-const API_BASE_URL = "http://localhost:5000/api";
+import "../styles/Profile.css";
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -34,11 +32,10 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+                const response = await api.get(`/api/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                console.log("🔍 API Response:", response.data);
                 setUser(response.data);
                 setNewPhone(response.data.phone !== "Not set" ? response.data.phone : "");
                 setNewAddress(response.data.address !== "Not set" ? response.data.address : "");
@@ -61,7 +58,7 @@ const Profile = () => {
         formData.append("profile_picture", imageFile);
 
         try {
-            const response = await axios.put(`${API_BASE_URL}/users/update/${user.id}/image`, formData, {
+            const response = await api.put(`/api/users/update/${user.id}/image`, formData, {
                 headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
             });
 
@@ -77,15 +74,16 @@ const Profile = () => {
         if (!token) return alert("❌ Authentication required!");
 
         try {
-            await axios.put(`${API_BASE_URL}/users/update/${user.id}`, { address: newAddress }, {
+            await api.put(`/api/users/update/${user.id}`, { address: newAddress, phone: newPhone }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            alert("✅ Address updated!");
-            setUser({ ...user, address: newAddress });
+            alert("✅ Profile updated!");
+            setUser({ ...user, address: newAddress, phone: newPhone });
             setEditingAddress(false);
+            setEditingPhone(false);
         } catch (error) {
-            alert("❌ Error updating address.");
+            alert("❌ Error updating profile.");
         }
     };
 
@@ -96,18 +94,17 @@ const Profile = () => {
         <div className="profile-container">
             <h2>👤 {user.name}'s Profile</h2>
 
-            {/* ✅ Profile Image Upload */}
-            <img src={user.profile_picture || "/default-avatar.png"} alt="Profile" className="profile-image"/>
+            <img src={user.profile_picture || "/default-avatar.png"} alt="Profile" className="profile-image" />
             <input type="file" onChange={(e) => setImageFile(e.target.files[0])} />
             <button onClick={handleImageUpload} className="upload-btn">Upload Image</button>
 
             <p><b>Email:</b> {user.email}</p>
 
-            {/* ✅ Editable Phone Field */}
             <p>
-                <b>Phone:</b> {editingPhone ? (
+                <b>Phone:</b>{" "}
+                {editingPhone ? (
                     <>
-                        <input type="text" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} placeholder="Enter phone number"/>
+                        <input type="text" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
                         <button onClick={handleAddressUpdate} className="update-btn">Save</button>
                         <button onClick={() => setEditingPhone(false)} className="cancel-btn">Cancel</button>
                     </>
@@ -119,11 +116,11 @@ const Profile = () => {
                 )}
             </p>
 
-            {/* ✅ Editable Address Field */}
             <p>
-                <b>Address:</b> {editingAddress ? (
+                <b>Address:</b>{" "}
+                {editingAddress ? (
                     <>
-                        <input type="text" value={newAddress} onChange={(e) => setNewAddress(e.target.value)} placeholder="Enter address"/>
+                        <input type="text" value={newAddress} onChange={(e) => setNewAddress(e.target.value)} />
                         <button onClick={handleAddressUpdate} className="update-btn">Save</button>
                         <button onClick={() => setEditingAddress(false)} className="cancel-btn">Cancel</button>
                     </>

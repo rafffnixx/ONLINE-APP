@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";  
 import "../styles/login.css";  
@@ -15,7 +15,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/api/auth/login", credentials);
+            const response = await api.post("/api/auth/login", credentials);
             localStorage.setItem("token", response.data.token);  
             
             const decoded = jwtDecode(response.data.token);  
@@ -34,12 +34,11 @@ const Login = () => {
     };
 
     return (
-        
         <div className="login-container">
             <h2>😍😍SHOP</h2>
 
             <form onSubmit={handleSubmit} className="login-form">
-                <h2 >🔑 Login</h2>
+                <h2>🔑 Login</h2>
 
                 <label>Email:</label>
                 <input type="email" name="email" value={credentials.email} onChange={handleChange} required />
@@ -50,7 +49,6 @@ const Login = () => {
                 <button type="submit" className="login-btn">Login</button>
             </form>
 
-            {/* ✅ Sign Up Button */}
             <p className="signup-text">Don't have an account?</p>
             <button onClick={() => navigate("/signup")} className="signup-btn">Sign Up</button>
         </div>
